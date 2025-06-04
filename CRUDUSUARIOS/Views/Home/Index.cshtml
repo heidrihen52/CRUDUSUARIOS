@@ -1,0 +1,118 @@
+﻿@model List<CRUDUSUARIOS.Models.Usuario> 
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Usuarios</h1>
+
+</div>
+
+<div class=" card">
+
+    <div class="card-body">
+        <a class="btn btn-primary btn-sm" asp-action="Usuario_Detalle" aps-controller="Home" asp-route-idUsuario="0"> + Nuevo </a>
+        <hr/>
+        <table id="tablaUsuarios" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Correo</th>
+                    <th>Nombre</th>
+                    <th>Telefono</th>
+                    <th>Cargo</th>
+                    <th>Estatus</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var item in Model)
+                {
+                    <tr>
+                        <td>@item.Correo</td>
+                        <td>@item.Nombre @item.ApellidoPaterno @item.ApellidoMaterno</td>
+                        <td>@item.Telefono</td>
+                        <td>@item.oCargo.Descripcion</td>
+                        <td>@item.Estatus</td>
+
+                        <td>
+                            <div class="container">
+
+                            
+                            <div class="dropdown justify-content-center align-items-center">
+                                <button class="btn btn-primary" type="button" data-bs-toggle="dropdown">
+                                    ...
+                                </button>
+                                <div class="dropdown-menu p-3" aria-labelledby="dropdownMenuButton">
+                                    @if(@item.Estatus != false )
+                                    {
+                                        <a class="dropdown-item" asp-action="Usuario_Detalle" asp-controller="Home" asp-route-idUsuario="@item.IdUsuario">Editar</a>
+                                        <a class="dropdown-item" asp-action="Usuario_Detalles" asp-controller="Home" asp-route-idUsuario="@item.IdUsuario">Detalles</a>
+                                    }
+                                    else
+                                    {
+                                        <p class="text-center">Usuario Inactivo</p>
+                                    }
+                                    
+
+                                    <hr />
+                                    <strong class="dropdown-header">Estatus</strong>
+                                    <form asp-action="CambiarEstatus" asp-controller="Home" method="post">
+                                        <input type="hidden" name="idUsuario" value="@item.IdUsuario" />
+                                        <div class="form-check mb-2">
+                                            <input type="checkbox" class="form-check-input" id="dropdownCheck_@item.IdUsuario" name="Estatus" value="true"
+                                            @(item.Estatus.GetValueOrDefault() ? "checked" : "") />
+                                            <label class="form-check-label" for="dropdownCheck_@item.IdUsuario">
+                                                Usuario Activo
+                                            </label>
+                                        </div>
+                                        <div class="mb-2 d-grid gap-2 col-6 mx-auto">
+                                            <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
+                                        </div>
+                                        
+                                    </form>
+                                </div>
+                            </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var dt = $('#tablaUsuarios').DataTable({
+                order: [[0, 'asc']],
+                columnDefs: [
+                    { targets: 0, orderSequence: ['asc', 'desc'] },
+                    { targets: '_all', orderable: true }
+                ],
+                language: {
+                    lengthMenu: "Mostrar _MENU_ registros por página",
+                    zeroRecords: "No se encontraron resultados",
+                    info: "Mostrando página _PAGE_ de _PAGES_",
+                    infoEmpty: "No hay registros disponibles",
+                    infoFiltered: "(filtrado de _MAX_ registros totales)",
+                    search: "Buscar:",
+                    paginate: {
+                        first: "Primero",
+                        last: "Último",
+                        next: "Siguiente",
+                        previous: "Anterior"
+                    }
+                }
+            });
+
+            $('#buscarUsuarios').on('keyup', function () {
+                dt.search(this.value).draw();
+            });
+        });
+    </script>
+}
+
+
+

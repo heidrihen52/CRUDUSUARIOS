@@ -1,0 +1,57 @@
+﻿@model CRUDUSUARIOS.Models.Usuario
+@{
+    ViewData["Title"] = "Usuario_Detalles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="display-4 text-center"> Destalles de Usuario  </h1>
+<div class="container">
+
+    <hr />
+
+    <div class="row justify-content-center align-items-center ">
+        <div class="col-sm-4">
+        <form asp-action="Usuario_Detalles" app-controller="Home" method="get">
+            <input type="hidden" asp-for="IdUsuario" />
+
+            <div class=" mb-2">
+                <label class="form-label" asp-for="Nombre">Nombre</label>
+                <input class="form-control form-control-sm" asp-for="Nombre" type="text" disabled />
+            </div>
+            <div class=" mb-2">
+                <label class="form-label" asp-for="ApellidoPaterno">Apellido Paterno</label>
+                <input class="form-control form-control-sm" asp-for="ApellidoPaterno" type="text" disabled />
+            </div>
+
+            <div class=" mb-2">
+                <label class="form-label" asp-for="ApellidoMaterno">Apellido Materno</label>
+                <input class="form-control form-control-sm" asp-for="ApellidoMaterno" type="text" disabled />
+            </div>
+
+            <div class=" mb-2">
+                <label class="form-label" asp-for="Correo">Correo</label>
+                <input class="form-control form-control-sm" asp-for="Correo" type="text" disabled />
+            </div>
+
+            <div class=" mb-2">
+                <label class="form-label" asp-for="Telefono">Telefono</label>
+                <input class="form-control form-control-sm" asp-for="Telefono" type="text" disabled />
+            </div>
+
+            <div class=" mb-3">
+                <label class="form-label" asp-for="IdCargo">Cargo</label>
+                <input class="form-control form-control-sm" asp-for="oCargo.Descripcion" type="text" disabled />
+            </div>
+
+
+                <div class=" mb-2 d-grid gap-2 col-6 mx-auto">
+               
+                <a class="btn btn-dark btn-sm" asp-action="Index" aps-controller="Home">Regresar</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+<</div>
