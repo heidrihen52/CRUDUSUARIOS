@@ -32,7 +32,7 @@
                         <td>@item.Nombre @item.ApellidoPaterno @item.ApellidoMaterno</td>
                         <td>@item.Telefono</td>
                         <td>@item.oCargo.Descripcion</td>
-                        <td>@item.Estatus</td>
+                        <td>@(item.Estatus == true ? "Activo" : "Inactivo")</td>
 
                         <td>
                             <div class="container">

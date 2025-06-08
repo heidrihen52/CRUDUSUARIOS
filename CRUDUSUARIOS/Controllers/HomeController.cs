@@ -59,6 +59,7 @@ namespace CRUDUSUARIOS.Controllers
             }
             else
             {
+                oUsuarioVM.oUsuario.Estatus = true;
                 _DBContext.Usuarios.Update(oUsuarioVM.oUsuario);
             }
             _DBContext.SaveChanges();

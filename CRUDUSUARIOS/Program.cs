@@ -3,7 +3,6 @@ using CRUDUSUARIOS.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<DbcrudcoreContext>(options => 
@@ -12,7 +11,6 @@ builder.Services.AddDbContext<DbcrudcoreContext>(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
