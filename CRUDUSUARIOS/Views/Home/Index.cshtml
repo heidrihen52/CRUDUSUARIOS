@@ -1,18 +1,16 @@
-﻿@model List<CRUDUSUARIOS.Models.Usuario> 
+﻿@model List<CRUDUSUARIOS.Models.Usuario>
 @{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
     <h1 class="display-4">Usuarios</h1>
-
 </div>
 
-<div class=" card">
-
+<div class="card">
     <div class="card-body">
-        <a class="btn btn-primary btn-sm" asp-action="Usuario_Detalle" aps-controller="Home" asp-route-idUsuario="0"> + Nuevo </a>
-        <hr/>
+        <a class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="abrirModal('crearUsuario', 'Crear Usuario')"> + Nuevo </a>
+        <hr />
         <table id="tablaUsuarios" class="table table-striped">
             <thead>
                 <tr>
@@ -25,54 +23,63 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach(var item in Model)
+                @foreach (var item in Model)
                 {
                     <tr>
                         <td>@item.Correo</td>
                         <td>@item.Nombre @item.ApellidoPaterno @item.ApellidoMaterno</td>
                         <td>@item.Telefono</td>
-                        <td>@item.oCargo.Descripcion</td>
+                        <td>@(item.oCargo != null ? item.oCargo.Descripcion : "Sin cargo")</td>
                         <td>@(item.Estatus == true ? "Activo" : "Inactivo")</td>
-
                         <td>
-                            <div class="container">
-
-                            
-                            <div class="dropdown justify-content-center align-items-center">
+                            <div class="dropdown">
                                 <button class="btn btn-primary" type="button" data-bs-toggle="dropdown">
                                     ...
                                 </button>
-                                <div class="dropdown-menu p-3" aria-labelledby="dropdownMenuButton">
-                                    @if(@item.Estatus != false )
+                                <div class="dropdown-menu p-3">
+                                    @if (item.Estatus != false)
                                     {
-                                        <a class="dropdown-item" asp-action="Usuario_Detalle" asp-controller="Home" asp-route-idUsuario="@item.IdUsuario">Editar</a>
-                                        <a class="dropdown-item" asp-action="Usuario_Detalles" asp-controller="Home" asp-route-idUsuario="@item.IdUsuario">Detalles</a>
+                                        <a class="dropdown-item" href="javascript:void(0);" onclick="abrirModal('editar_@item.IdUsuario', 'Editar Usuario')">Editar</a>
+                                        <a class="dropdown-item" href="javascript:void(0);" onclick="abrirModal('detalles_@item.IdUsuario', 'Detalles de Usuario')">Detalles</a>
+                                        <hr />
+                                        <a class="dropdown-item" href="javascript:void(0);" onclick="abrirModalCambioEstatus('@item.IdUsuario', false)">Cambiar estatus</a>
                                     }
                                     else
                                     {
                                         <p class="text-center">Usuario Inactivo</p>
+                                        <hr />
+                                        <a class="dropdown-item text-center bg-primary text-white rounded" href="javascript:void(0);" onclick="abrirModalCambioEstatus('@item.IdUsuario', true)">Activar</a>
                                     }
-                                    
+                                </div>
 
-                                    <hr />
-                                    <strong class="dropdown-header">Estatus</strong>
-                                    <form asp-action="CambiarEstatus" asp-controller="Home" method="post">
+                            </div>
+                            <div id="editar_@item.IdUsuario" class="d-none">
+                                @await Html.PartialAsync("Usuario_Detalle", new CRUDUSUARIOS.Models.ViewModels.UsuarioVM { oUsuario = item, oListaCargo = ViewBag.ListaCargo })
+                            </div>
+                            <div id="detalles_@item.IdUsuario" class="d-none">
+                                @await Html.PartialAsync("Usuario_Detalles", item)
+                            </div>
+                            <div id="estatus_@item.IdUsuario" class="d-none">
+                                <div class="text-center">
+                                    <h5>¿Está seguro que desea @(item.Estatus.HasValue && item.Estatus.Value ? "desactivar" : "activar") al usuario?</h5>
+                                    @if (item.Estatus.Value == true)
+                                    {
+                                        <p>No podrá editar ni ver los datos del usuario</p>
+                                    }
+                                    else
+                                    {
+                                        <p>Podrá ver y editar los datos del usuario</p>
+                                    }
+                                    <form method="post" asp-controller="Home" asp-action="CambiarEstatus">
                                         <input type="hidden" name="idUsuario" value="@item.IdUsuario" />
-                                        <div class="form-check mb-2">
-                                            <input type="checkbox" class="form-check-input" id="dropdownCheck_@item.IdUsuario" name="Estatus" value="true"
-                                            @(item.Estatus.GetValueOrDefault() ? "checked" : "") />
-                                            <label class="form-check-label" for="dropdownCheck_@item.IdUsuario">
-                                                Usuario Activo
-                                            </label>
-                                        </div>
-                                        <div class="mb-2 d-grid gap-2 col-6 mx-auto">
-                                            <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
-                                        </div>
-                                        
+                                        <input type="hidden" name="nuevoEstatus" value="@(item.Estatus.HasValue && item.Estatus.Value ? "false" : "true")" />
+                                        <button type="submit" class="btn @(item.Estatus.HasValue && item.Estatus.Value ? "btn-danger" : "btn-success") mt-3">
+                                            @(item.Estatus.HasValue && item.Estatus.Value ? "Desactivar" : "Activar")
+                                        </button>
                                     </form>
                                 </div>
                             </div>
-                            </div>
+
                         </td>
                     </tr>
                 }
@@ -80,17 +87,30 @@
         </table>
     </div>
 </div>
+<div id="crearUsuario" class="d-none">
+    @await Html.PartialAsync("Usuario_Detalle", new CRUDUSUARIOS.Models.ViewModels.UsuarioVM { oUsuario = new CRUDUSUARIOS.Models.Usuario(), oListaCargo = ViewBag.ListaCargo })
+</div>
 
+<!-- Modal para editar y guardar usuarios-->
+<div class="modal fade" id="modalUsuario" tabindex="-1" aria-labelledby="modalUsuarioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalUsuarioLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="contenidoModalUsuario"></div>
+        </div>
+    </div>
+</div>
+
+<!--Estos scripts deben ir en un archivo aparte-->
 @section Scripts {
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function () {
             var dt = $('#tablaUsuarios').DataTable({
                 order: [[0, 'asc']],
-                columnDefs: [
-                    { targets: 0, orderSequence: ['asc', 'desc'] },
-                    { targets: '_all', orderable: true }
-                ],
                 language: {
                     lengthMenu: "Mostrar _MENU_ registros por página",
                     zeroRecords: "No se encontraron resultados",
@@ -111,8 +131,21 @@
                 dt.search(this.value).draw();
             });
         });
+
+        function abrirModal(idDiv, titulo) {
+            const contenido = document.getElementById(idDiv).innerHTML;
+            document.getElementById('modalUsuarioLabel').textContent = titulo;
+            document.getElementById('contenidoModalUsuario').innerHTML = contenido;
+            let modal = new bootstrap.Modal(document.getElementById('modalUsuario'));
+            modal.show();
+        }
+                function abrirModalCambioEstatus(idUsuario, activar) {
+            const contenido = document.getElementById('estatus_' + idUsuario).innerHTML;
+            document.getElementById('modalUsuarioLabel').textContent = activar ? "Activar Usuario" : "Cambiar Estatus";
+            document.getElementById('contenidoModalUsuario').innerHTML = contenido;
+            let modal = new bootstrap.Modal(document.getElementById('modalUsuario'));
+            modal.show();
+        }
+
     </script>
 }
-
-
-

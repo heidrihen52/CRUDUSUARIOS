@@ -19,6 +19,11 @@ namespace CRUDUSUARIOS.Controllers
         public IActionResult Index()
         {
             List<Usuario> lista = _DBContext.Usuarios.Include(c => c.oCargo).ToList();
+            ViewBag.ListaCargo = _DBContext.Cargos.Select(c => new SelectListItem
+            {
+                Text = c.Descripcion,
+                Value = c.IdCargo.ToString()
+            }).ToList();
             return View(lista);
         }
 
@@ -76,17 +81,19 @@ namespace CRUDUSUARIOS.Controllers
         }
 
 
-        [HttpPost]
-        public IActionResult CambiarEstatus(int idUsuario, bool Estatus)
-        {
-            var usuario = _DBContext.Usuarios.FirstOrDefault(u => u.IdUsuario == idUsuario);
-            if (usuario != null)
-            {
-                usuario.Estatus = Estatus;
-                _DBContext.SaveChanges();
-            }
+       
 
-            return RedirectToAction("Index");
+        [HttpPost]
+        public IActionResult CambiarEstatus(int idUsuario, bool nuevoEstatus)
+        {
+            var usuario = _DBContext.Usuarios.Find(idUsuario);
+            if (usuario == null)
+                return NotFound();
+
+            usuario.Estatus = nuevoEstatus;
+            _DBContext.SaveChanges();
+
+            return RedirectToAction("Index","Home");
         }
 
     }
