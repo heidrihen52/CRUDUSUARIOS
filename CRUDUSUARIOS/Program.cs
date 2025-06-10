@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using CRUDUSUARIOS.Models;
+using CRUDUSUARIOS.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<DbcrudcoreContext>(options => 
     options.UseSqlServer(builder.Configuration.GetConnectionString("cadenaSQL"))
 );
+
+builder.Services.AddScoped<UsuarioService>();
 
 var app = builder.Build();
 

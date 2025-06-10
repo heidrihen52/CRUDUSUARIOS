@@ -62,7 +62,7 @@
                             <div id="estatus_@item.IdUsuario" class="d-none">
                                 <div class="text-center">
                                     <h5>¿Está seguro que desea @(item.Estatus.HasValue && item.Estatus.Value ? "desactivar" : "activar") al usuario?</h5>
-                                    @if (item.Estatus.Value == true)
+                                    @if (item.Estatus.HasValue && item.Estatus.Value)
                                     {
                                         <p>No podrá editar ni ver los datos del usuario</p>
                                     }
@@ -91,7 +91,6 @@
     @await Html.PartialAsync("Usuario_Detalle", new CRUDUSUARIOS.Models.ViewModels.UsuarioVM { oUsuario = new CRUDUSUARIOS.Models.Usuario(), oListaCargo = ViewBag.ListaCargo })
 </div>
 
-<!-- Modal para editar y guardar usuarios-->
 <div class="modal fade" id="modalUsuario" tabindex="-1" aria-labelledby="modalUsuarioLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -104,48 +103,7 @@
     </div>
 </div>
 
-<!--Estos scripts deben ir en un archivo aparte-->
 @section Scripts {
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            var dt = $('#tablaUsuarios').DataTable({
-                order: [[0, 'asc']],
-                language: {
-                    lengthMenu: "Mostrar _MENU_ registros por página",
-                    zeroRecords: "No se encontraron resultados",
-                    info: "Mostrando página _PAGE_ de _PAGES_",
-                    infoEmpty: "No hay registros disponibles",
-                    infoFiltered: "(filtrado de _MAX_ registros totales)",
-                    search: "Buscar:",
-                    paginate: {
-                        first: "Primero",
-                        last: "Último",
-                        next: "Siguiente",
-                        previous: "Anterior"
-                    }
-                }
-            });
-
-            $('#buscarUsuarios').on('keyup', function () {
-                dt.search(this.value).draw();
-            });
-        });
-
-        function abrirModal(idDiv, titulo) {
-            const contenido = document.getElementById(idDiv).innerHTML;
-            document.getElementById('modalUsuarioLabel').textContent = titulo;
-            document.getElementById('contenidoModalUsuario').innerHTML = contenido;
-            let modal = new bootstrap.Modal(document.getElementById('modalUsuario'));
-            modal.show();
-        }
-                function abrirModalCambioEstatus(idUsuario, activar) {
-            const contenido = document.getElementById('estatus_' + idUsuario).innerHTML;
-            document.getElementById('modalUsuarioLabel').textContent = activar ? "Activar Usuario" : "Cambiar Estatus";
-            document.getElementById('contenidoModalUsuario').innerHTML = contenido;
-            let modal = new bootstrap.Modal(document.getElementById('modalUsuario'));
-            modal.show();
-        }
-
-    </script>
+    <script src="~/js/usuarios.js"></script>
 }
