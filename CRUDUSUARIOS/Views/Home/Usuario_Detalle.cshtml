@@ -26,12 +26,12 @@
 
                 <div class="mb-2">
                     <label class="form-label" asp-for="oUsuario.Correo">Correo</label>
-                    <input required class="form-control form-control-sm" asp-for="oUsuario.Correo" type="text" />
+                    <input required class="form-control form-control-sm" asp-for="oUsuario.Correo" type="email" />
                 </div>
 
                 <div class="mb-2">
                     <label class="form-label" asp-for="oUsuario.Telefono">Teléfono</label>
-                    <input required class="form-control form-control-sm" asp-for="oUsuario.Telefono" type="text" />
+                    <input required class="form-control form-control-sm" asp-for="oUsuario.Telefono" type="tel" pattern="^[0-9]{10}" />
                 </div>
 
                 <div class="mb-3">
